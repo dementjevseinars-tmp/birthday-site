@@ -269,7 +269,10 @@ html,body{
 /* Uzliekot peli vai pieskaroties pogai — teksts kļūst lasāms (nav apgriezts) */
 .xp-btn:hover .reverse-text,
 .xp-btn:active .reverse-text,
+.xp-btn.revealed .reverse-text,
 .xp-btn.fx-play .reverse-text{transform:scaleX(1);}
+/* poga, kas gaida otro pieskārienu (telefonā) — viegli izcelta */
+.xp-btn.revealed{border-color:var(--xp-blue);box-shadow:0 0 0 2px rgba(90,150,255,.35);}
 .runaway-wrap{position:relative;min-height:160px;}
 #runaway{position:absolute;left:50%;top:0;transform:translateX(-50%);transition:all .18s ease;}
 
@@ -670,9 +673,9 @@ html,body{
         <div class="q-title fx-wobble">If you could go back into the past, what would you do?</div>
         <div class="q-img-wrap"><img class="q-img" data-ph="Image: q6.jpg" src="./q6.jpg" alt=""></div>
         <div class="options">
-          <button class="xp-btn" onclick="nextQ(7)"><span class="reverse-text">Prevent the whole "Laura Dārziņa" injury simulation.</span></button>
-          <button class="xp-btn" onclick="nextQ(7)"><span class="reverse-text">Be Neo (from The Matrix) and actually make the rooftop run this time — while escaping from Sharky.</span></button>
-          <button class="xp-btn" onclick="nextQ(7)"><span class="reverse-text">Build another Sharky house with the cousins.</span></button>
+          <button class="xp-btn" onclick="revealThenNext(this, 7)"><span class="reverse-text">Prevent the whole "Laura Dārziņa" injury simulation.</span></button>
+          <button class="xp-btn" onclick="revealThenNext(this, 7)"><span class="reverse-text">Be Neo (from The Matrix) and actually make the rooftop run this time — while escaping from Sharky.</span></button>
+          <button class="xp-btn" onclick="revealThenNext(this, 7)"><span class="reverse-text">Build another Sharky house with the cousins.</span></button>
         </div>
       </div>
 
@@ -1185,6 +1188,24 @@ function nextQ(n){
   } else {
     finish();
   }
+}
+
+/* ---- 6. JAUTĀJUMA APGRIEZTĀ TEKSTA POGAS (telefonam draudzīgi) ----
+   Uz DATORA teksts kļūst lasāms ar hover, tāpēc viens klikšķis turpina uzreiz.
+   Uz TELEFONA (nav hover): 1. pieskāriens padara tekstu lasāmu (un pauzē),
+   2. pieskāriens pāriet uz nākamo jautājumu. Tā lietotājs paspēj izlasīt. */
+function revealThenNext(btn, n){
+  // vai ierīce atbalsta hover (dators)? Ja jā — turpinām uzreiz.
+  const canHover = window.matchMedia && window.matchMedia('(hover: hover)').matches;
+  if(canHover || btn.dataset.revealed){
+    nextQ(n);
+    return;
+  }
+  // telefonā: 1. pieskāriens — parādām tekstu lasāmu un pauzējam
+  btn.dataset.revealed = "1";
+  const span=btn.querySelector('.reverse-text');
+  if(span) span.style.transform='scaleX(1)';
+  btn.classList.add('revealed');
 }
 
 /* ---- BĒGOŠĀ POGA (vispārīga) ----
