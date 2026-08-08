@@ -109,7 +109,8 @@ html,body{
   border:1px solid transparent;transition:opacity .35s ease,transform .35s ease;
 }
 .desk-icon:hover{background:rgba(255,255,255,.18);border-color:rgba(255,255,255,.35);}
-.desk-icon .di-img{font-size:30px;line-height:1;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4));}
+.desk-icon .di-img{font-size:30px;line-height:1;height:44px;display:flex;align-items:center;justify-content:center;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4));}
+.desk-icon .di-img img{width:44px;height:44px;object-fit:contain;display:block;}
 .desk-icon .di-label{margin-top:3px;font-size:11px;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.9);
   word-break:break-word;}
 /* ikona "izdzēšas" ar animāciju */
@@ -497,16 +498,21 @@ html,body{
 
   <!-- ========================================================================
        DARBVIRSMAS IKONAS — kļūdas logs "izdzēš" pa vienai (skat. closeError).
-       Vari pievienot/noņemt ikonas šeit. Katrai ir emoji + nosaukums. ======================================================================== -->
+       KĀ PIEVIENOT SAVAS BILDES:
+         Ieliec bildes mapē blakus index.html ar nosaukumiem icon1.jpg ...
+         icon8.jpg (der arī .png). Ja bilde nav atrasta, rādīsies emoji.
+       IETEIKUMS: izmanto PNG ar caurspīdīgu fonu, lai nav balta kvadrāta.
+       Bildes labākais izmērs ~64x64 px (kvadrātveida).
+       Vari mainīt nosaukumus (di-label) un bilžu failu nosaukumus (src). ==== -->
   <div id="desktop-icons">
-    <div class="desk-icon"><div class="di-img">🗑️</div><div class="di-label">Recycle Bin</div></div>
-    <div class="desk-icon"><div class="di-img">📁</div><div class="di-label">My Documents</div></div>
-    <div class="desk-icon"><div class="di-img">💾</div><div class="di-label">Old Backups</div></div>
-    <div class="desk-icon"><div class="di-img">🎮</div><div class="di-label">Games</div></div>
-    <div class="desk-icon"><div class="di-img">🌐</div><div class="di-label">Internet</div></div>
-    <div class="desk-icon"><div class="di-img">🎵</div><div class="di-label">My Music</div></div>
-    <div class="desk-icon"><div class="di-img">📷</div><div class="di-label">Old Photos</div></div>
-    <div class="desk-icon"><div class="di-img">📝</div><div class="di-label">Notes.txt</div></div>
+    <div class="desk-icon"><div class="di-img"><img src="./icon1.jpg" alt="" onerror="this.replaceWith(document.createTextNode('🗑️'))"></div><div class="di-label">Recycle Bin</div></div>
+    <div class="desk-icon"><div class="di-img"><img src="./icon2.jpg" alt="" onerror="this.replaceWith(document.createTextNode('📁'))"></div><div class="di-label">My Documents</div></div>
+    <div class="desk-icon"><div class="di-img"><img src="./icon3.jpg" alt="" onerror="this.replaceWith(document.createTextNode('💾'))"></div><div class="di-label">Old Backups</div></div>
+    <div class="desk-icon"><div class="di-img"><img src="./icon4.jpg" alt="" onerror="this.replaceWith(document.createTextNode('🎮'))"></div><div class="di-label">Games</div></div>
+    <div class="desk-icon"><div class="di-img"><img src="./icon5.jpg" alt="" onerror="this.replaceWith(document.createTextNode('🌐'))"></div><div class="di-label">Internet</div></div>
+    <div class="desk-icon"><div class="di-img"><img src="./icon6.jpg" alt="" onerror="this.replaceWith(document.createTextNode('🎵'))"></div><div class="di-label">My Music</div></div>
+    <div class="desk-icon"><div class="di-img"><img src="./icon7.jpg" alt="" onerror="this.replaceWith(document.createTextNode('📷'))"></div><div class="di-label">Old Photos</div></div>
+    <div class="desk-icon"><div class="di-img"><img src="./icon8.jpg" alt="" onerror="this.replaceWith(document.createTextNode('📝'))"></div><div class="di-label">Notes.txt</div></div>
   </div>
 
   <!-- ITEKSHA (in-page) PAZIŅOJUMA LOGS — aizstāj sistēmas alert(), lai
