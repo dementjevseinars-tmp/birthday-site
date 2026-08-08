@@ -1,0 +1,1491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Windows XP — Gunārs</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+/* =========================================================================
+   PALETE UN MAINĪGIE
+   ========================================================================= */
+:root{
+  --xp-blue:#0058e6;
+  --xp-title-a:#1d6ef5;
+  --xp-title-b:#3a93ff;
+  --xp-title-c:#0a4bd4;
+  --xp-bg:#ece9d8;
+  --xp-border:#0831d9;
+  --xp-gold:#f4c430;
+  --xp-green-a:#7bb442;
+  --xp-green-b:#4a8a1f;
+  --xp-face-a:#ffffff;
+  --xp-face-b:#e4e0cd;
+  --shadow:0 18px 40px rgba(0,0,0,.55);
+  --radius:9px;
+}
+
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{
+  margin:0;padding:0;height:100%;width:100%;
+  font-family:"Trebuchet MS","Segoe UI","Tahoma",sans-serif;
+  overflow:hidden;background:#000;color:#000;
+  user-select:none;-webkit-user-select:none;
+}
+
+/* =========================================================================
+   1. PIETEIKŠANĀS EKRĀNS
+   ========================================================================= */
+#login-screen{
+  position:fixed;inset:0;z-index:200;
+  display:flex;flex-direction:column;justify-content:center;align-items:center;
+  background:
+    radial-gradient(120% 80% at 50% -10%, #2a6fe0 0%, #10419f 45%, #062a72 100%);
+  animation:fadeIn .6s ease;
+}
+.login-topbar,.login-botbar{
+  position:absolute;left:0;width:100%;height:64px;
+  background:linear-gradient(#3f7ee0,#1a4fb0);
+}
+.login-topbar{top:0;border-bottom:2px solid #ff8c1a;box-shadow:0 3px 0 #0a2f78;}
+.login-botbar{bottom:0;height:56px;border-top:2px solid #ff8c1a;box-shadow:0 -3px 0 #0a2f78;
+  display:flex;align-items:center;padding:0 22px;color:#cfe0ff;font-size:13px;}
+.login-brand{
+  position:absolute;top:0;bottom:0;left:0;width:50%;
+  display:flex;flex-direction:column;justify-content:center;align-items:flex-end;
+  padding-right:34px;border-right:1px solid rgba(255,255,255,.35);
+}
+.login-brand .logo{color:#fff;font-size:30px;font-weight:bold;text-shadow:0 2px 4px rgba(0,0,0,.4);}
+.login-brand .logo span{color:#ff8c1a;}
+.login-brand .tag{color:#bcd2ff;font-size:14px;margin-top:6px;}
+.login-users{
+  position:absolute;top:0;bottom:0;left:50%;width:50%;
+  display:flex;flex-direction:column;justify-content:center;padding-left:34px;
+}
+.user-tile{
+  display:flex;align-items:center;gap:16px;cursor:pointer;
+  padding:8px 14px;border-radius:8px;transition:background .15s;
+}
+.user-tile:hover,.user-tile:focus-visible{background:rgba(255,255,255,.16);outline:none;}
+.user-avatar{
+  width:64px;height:64px;border:3px solid #fff;border-radius:6px;flex:none;
+  background:#c9d9f0 url('./gunars.jpg') center/cover no-repeat;
+  box-shadow:0 2px 6px rgba(0,0,0,.4);
+  display:flex;align-items:center;justify-content:center;font-size:30px;
+}
+.user-name{color:#fff;font-size:24px;text-shadow:0 1px 3px rgba(0,0,0,.5);}
+.user-hint{color:#cfe0ff;font-size:12px;margin-top:2px;}
+
+@media(max-width:640px){
+  .login-brand{width:100%;left:0;align-items:center;padding:0;border:none;top:auto;bottom:58%;height:auto;}
+  .login-users{width:100%;left:0;top:44%;bottom:auto;height:auto;padding:0 24px;}
+  .user-tile{justify-content:center;}
+}
+
+/* =========================================================================
+   2. DARBVIRSMA
+   ========================================================================= */
+#desktop{display:none;position:fixed;inset:0;}
+#wallpaper{
+  position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;
+  background:linear-gradient(#5b9de0 0%,#7fc24d 62%,#5aa32e 100%);
+}
+/* fallback "Bliss" hill if no wallpaper image loads */
+#wallpaper-fallback{
+  position:absolute;inset:0;z-index:0;
+  background:linear-gradient(#4a90e2 0%,#8ec9f0 40%,#cfe8a0 55%,#6fb03a 62%,#4f8f27 100%);
+}
+#wallpaper-fallback::after{
+  content:"";position:absolute;left:-10%;bottom:0;width:120%;height:45%;
+  background:radial-gradient(60% 130% at 45% 100%, #7ec24a 0%, #57951f 70%, transparent 71%);
+}
+/* ---- DARBVIRSMAS IKONAS ---- */
+#desktop-icons{
+  position:absolute;top:16px;left:12px;z-index:1;
+  display:flex;flex-direction:column;flex-wrap:wrap;gap:6px;max-height:70vh;
+}
+.desk-icon{
+  width:78px;padding:6px 4px;border-radius:4px;text-align:center;cursor:default;
+  border:1px solid transparent;transition:opacity .35s ease,transform .35s ease;
+}
+.desk-icon:hover{background:rgba(255,255,255,.18);border-color:rgba(255,255,255,.35);}
+.desk-icon .di-img{font-size:30px;line-height:1;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4));}
+.desk-icon .di-label{margin-top:3px;font-size:11px;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.9);
+  word-break:break-word;}
+/* ikona "izdzēšas" ar animāciju */
+.desk-icon.deleting{opacity:0;transform:scale(.3) rotate(-12deg);}
+.taskbar{
+  position:absolute;left:0;bottom:0;width:100%;height:38px;z-index:50;
+  background:linear-gradient(#3f8df5 0%,#2b70de 8%,#1655c8 95%);
+  border-top:1px solid #3f8d010;box-shadow:inset 0 1px 0 #6ab0ff;
+  display:flex;align-items:center;
+}
+.start-btn{
+  height:100%;display:flex;align-items:center;gap:8px;padding:0 22px 0 12px;
+  background:linear-gradient(#7bcb4e,#3f8a1b);color:#fff;font-weight:bold;font-style:italic;
+  font-size:16px;border-right:1px solid #2f6a14;border-top-right-radius:9px;border-bottom-right-radius:9px;
+  text-shadow:1px 1px 1px rgba(0,0,0,.4);cursor:default;
+}
+.start-orb{width:20px;height:20px;border-radius:50%;background:
+  radial-gradient(circle at 35% 30%, #fff, #d6e6ff 30%, #ff5a3c 31%, #ff9a3c 60%, #62b021 61%, #2d8a10);}
+.tray{margin-left:auto;height:100%;display:flex;align-items:center;gap:10px;padding:0 12px;
+  background:linear-gradient(#1a8fe0,#1160c8);color:#eaf3ff;font-size:12px;border-left:1px solid #0a3f9e;}
+
+/* =========================================================================
+   3. LOGU KARKASS
+   ========================================================================= */
+.window{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) scale(.96);
+  width:min(92vw,560px);z-index:100;
+  background:var(--xp-bg);border:1px solid var(--xp-border);
+  border-radius:var(--radius) var(--radius) 4px 4px;
+  box-shadow:var(--shadow);opacity:0;pointer-events:none;
+  transition:opacity .25s ease,transform .25s ease;
+}
+.window.show{opacity:1;transform:translate(-50%,-50%) scale(1);pointer-events:auto;}
+.window.wide{width:min(94vw,720px);}
+.title-bar{
+  display:flex;align-items:center;gap:8px;padding:5px 6px 5px 9px;
+  background:linear-gradient(#2b7bff 0%,#1e63e6 8%,var(--xp-title-a) 45%,var(--xp-title-c) 100%);
+  border-radius:8px 8px 0 0;color:#fff;font-weight:bold;font-size:13px;
+  text-shadow:1px 1px 1px rgba(0,0,0,.4);
+}
+.title-bar .ico{font-size:15px;}
+.title-bar .t{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.title-controls{display:flex;gap:3px;}
+.win-btn{
+  width:22px;height:20px;border-radius:3px;border:1px solid #12439e;
+  background:linear-gradient(#5a95f5,#2f6fe0);color:#fff;font-weight:bold;font-size:12px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  box-shadow:inset 1px 1px 0 rgba(255,255,255,.5);
+}
+.win-btn:hover{filter:brightness(1.12);}
+.win-x{background:linear-gradient(#f37b6e,#e0392b);border-color:#a51b0f;}
+.win-content{padding:20px 22px 24px;text-align:center;max-height:78vh;overflow-y:auto;}
+
+/* =========================================================================
+   4. POGAS UN ELEMENTI
+   ========================================================================= */
+.xp-btn{
+  display:inline-block;font-size:14px;line-height:1.35;color:#000;cursor:pointer;
+  padding:9px 16px;margin:5px 0;border-radius:4px;border:1px solid #7a9bd0;
+  background:linear-gradient(var(--xp-face-a),var(--xp-face-b));
+  box-shadow:inset 0 1px 0 #fff,0 1px 2px rgba(0,0,0,.25);
+  transition:border-color .12s,background .12s,box-shadow .12s;
+}
+.xp-btn:hover,.xp-btn:focus-visible{
+  border-color:#e6820a;background:linear-gradient(#fff8ef,#ffe2b8);outline:none;
+  box-shadow:inset 0 1px 0 #fff,0 0 0 2px rgba(230,130,10,.25);
+}
+.xp-btn.primary{
+  color:#fff;font-weight:bold;border-color:#2f6a14;text-shadow:0 1px 1px rgba(0,0,0,.35);
+  background:linear-gradient(var(--xp-green-a),var(--xp-green-b));
+}
+.xp-btn.primary:hover{background:linear-gradient(#8ec95a,#57991f);box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 0 0 2px rgba(120,180,60,.35);}
+/* nospiešanas atsauksme — strādā arī uz telefona (pieskāriens) */
+.xp-btn:active{transform:scale(.95);}
+
+.screen{display:none;animation:qIn .35s ease;}
+.screen.active{display:block;}
+.q-num{
+  display:inline-block;background:var(--xp-blue);color:#fff;font-weight:bold;
+  font-size:12px;padding:3px 10px;border-radius:20px;margin-bottom:10px;letter-spacing:.5px;
+}
+.q-title{font-size:17px;font-weight:bold;line-height:1.35;margin:2px 0 14px;}
+.options{display:flex;flex-direction:column;gap:10px;margin-top:6px;}
+
+.q-img-wrap{margin:6px auto 14px;}
+.q-img{
+  display:block;max-width:100%;max-height:180px;margin:0 auto;object-fit:contain;
+  border:2px solid #7f9db9;border-radius:6px;background:#fff;
+}
+/* stils, kad bilde vēl nav pievienota (placeholder) */
+.q-img.missing{
+  width:200px;height:120px;border-style:dashed;color:#8a93a5;font-size:12px;
+  display:flex;align-items:center;justify-content:center;text-align:center;padding:8px;
+  background:repeating-linear-gradient(45deg,#f4f4f0,#f4f4f0 10px,#eceae0 10px,#eceae0 20px);
+}
+.hint{font-size:13px;color:#333;margin:2px 0 12px;}
+
+/* =========================================================================
+   5. VIZUĀLIE EFEKTI (pogu "hover" animācijas)
+   -------------------------------------------------------------------------
+   KĀ MAINĪT: katrai atbildes pogai HTML daļā ir klase, piem.
+       <button class="xp-btn fx-shake" ...>
+   Nomaini "fx-shake" pret jebkuru no zemāk esošajiem, lai mainītu efektu.
+   (Meklē HTML daļā "fx-" — tur atrodas visas pogas.)
+
+   PIEEJAMIE EFEKTI:
+     fx-shake   — poga trīc/vibrē
+     fx-spin    — apgriežas par 360° (griešanās)
+     fx-shrink  — sarūk (kļūst mazāka)
+     fx-wobble  — viegli šūpojas + palielinās
+     fx-jelly   — želejveidīgi izpletas un saraujas
+     fx-tilt3d  — sasveras 3D perspektīvā
+     fx-flip    — apmet kūleni (griežas horizontāli)
+     fx-slide   — paslīd uz sāniem un atpakaļ
+     fx-glow    — iemirdzas ar zilganu spīdumu
+     fx-bounce  — palecas uz augšu kā bumbiņa
+     fx-swing   — šūpojas kā pulkstenis
+     fx-pulse   — ritmiski pulsē (aug/sarūk)
+
+   ĪPAŠS EFEKTS (nepareizajai atbildei):
+     fx-flee    — 1. klikšķī teksts aizskrien PA KREISI (poga paliek tukša),
+                  2. klikšķī pati poga aizskrien PA KREISI no ekrāna.
+                  Lietošana: <button class="xp-btn fx-flee"
+                             onclick="escapeText(this, event)">TEKSTS</button>
+   ========================================================================= */
+.fx-shake:hover,.fx-shake.fx-play{animation:shake .45s infinite;}
+.fx-spin:hover,.fx-spin.fx-play{transform:rotate(360deg);transition:transform .55s;}
+.fx-shrink:hover,.fx-shrink.fx-play{transform:scale(.62);transition:transform .3s;}
+.fx-wobble:hover,.fx-wobble.fx-play{animation:wobble .6s ease;}
+/* --- jauni unikālie efekti --- */
+.fx-jelly:hover,.fx-jelly.fx-play{animation:jelly .55s ease;}
+.fx-tilt3d{transition:transform .3s;}
+.fx-tilt3d:hover,.fx-tilt3d.fx-play{transform:perspective(400px) rotateX(18deg) rotateY(-12deg) scale(1.04);}
+.fx-flip:hover,.fx-flip.fx-play{animation:flip .6s ease;}
+.fx-slide:hover,.fx-slide.fx-play{animation:slide .5s ease;}
+.fx-glow{transition:box-shadow .3s,transform .3s;}
+.fx-glow:hover,.fx-glow.fx-play{box-shadow:0 0 14px 2px rgba(90,150,255,.9),0 0 4px #fff inset;transform:scale(1.03);}
+.fx-bounce:hover,.fx-bounce.fx-play{animation:bounce .55s ease;}
+.fx-swing:hover,.fx-swing.fx-play{animation:swing .6s ease;transform-origin:top center;}
+.fx-pulse:hover,.fx-pulse.fx-play{animation:pulse .5s ease infinite;}
+/* transform-balstītie efekti telefonā (pieskāriens): nospēlē un atgriežas */
+.fx-spin.fx-play{animation:spin360 .55s ease;transform:none;}
+.fx-shrink.fx-play{animation:shrinkPop .4s ease;transform:none;}
+.fx-tilt3d.fx-play{animation:tiltPop .5s ease;transform:none;}
+.fx-glow.fx-play{animation:glowPop .5s ease;}
+@keyframes spin360{from{transform:rotate(0);}to{transform:rotate(360deg);}}
+@keyframes shrinkPop{0%,100%{transform:scale(1);}50%{transform:scale(.62);}}
+@keyframes tiltPop{0%,100%{transform:perspective(400px) rotateX(0) rotateY(0) scale(1);}50%{transform:perspective(400px) rotateX(18deg) rotateY(-12deg) scale(1.04);}}
+@keyframes glowPop{0%,100%{box-shadow:none;transform:scale(1);}50%{box-shadow:0 0 14px 2px rgba(90,150,255,.9),0 0 4px #fff inset;transform:scale(1.03);}}
+/* izbēgošā teksta poga: teksts aizskrien pa kreisi, poga paliek tukša */
+.fx-flee{overflow:hidden;position:relative;min-height:38px;}
+.flee-txt{display:inline-block;white-space:nowrap;transition:transform .45s ease,opacity .45s ease;}
+.curve{display:inline-block;transform:rotate(-4deg);}
+.curve b{display:inline-block;}
+.reverse-text{display:inline-block;transform:scaleX(-1);transition:transform .25s ease;}
+/* Uzliekot peli vai pieskaroties pogai — teksts kļūst lasāms (nav apgriezts) */
+.xp-btn:hover .reverse-text,
+.xp-btn:active .reverse-text,
+.xp-btn.fx-play .reverse-text{transform:scaleX(1);}
+.runaway-wrap{position:relative;min-height:160px;}
+#runaway{position:absolute;left:50%;top:0;transform:translateX(-50%);transition:all .18s ease;}
+
+@keyframes shake{
+  0%{transform:translate(1px,1px) rotate(0);}
+  20%{transform:translate(-2px,0) rotate(-1deg);}
+  40%{transform:translate(2px,1px) rotate(1deg);}
+  60%{transform:translate(-1px,2px) rotate(0);}
+  80%{transform:translate(2px,-1px) rotate(1deg);}
+  100%{transform:translate(1px,1px) rotate(0);}
+}
+@keyframes wobble{0%,100%{transform:none;}25%{transform:rotate(3deg) scale(1.03);}75%{transform:rotate(-3deg) scale(1.03);}}
+@keyframes qIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+/* --- jauno efektu keyframes --- */
+@keyframes jelly{0%,100%{transform:scale(1,1);}30%{transform:scale(1.18,.78);}45%{transform:scale(.85,1.15);}65%{transform:scale(1.06,.94);}}
+@keyframes flip{from{transform:rotateY(0);}to{transform:rotateY(360deg);}}
+@keyframes slide{0%,100%{transform:translateX(0);}25%{transform:translateX(10px);}75%{transform:translateX(-10px);}}
+@keyframes bounce{0%,100%{transform:translateY(0);}30%{transform:translateY(-14px);}50%{transform:translateY(0);}70%{transform:translateY(-6px);}}
+@keyframes swing{0%,100%{transform:rotate(0);}20%{transform:rotate(8deg);}40%{transform:rotate(-6deg);}60%{transform:rotate(4deg);}80%{transform:rotate(-2deg);}}
+@keyframes pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.08);}}
+
+/* curved marquee title */
+.marq{overflow:hidden;white-space:nowrap;}
+.marq b{display:inline-block;padding-left:100%;animation:marq 11s linear infinite;}
+@keyframes marq{from{transform:translateX(0);}to{transform:translateX(-100%);}}
+
+/* progresa josla */
+.progress{height:8px;border-radius:6px;background:#c9c6b6;border:1px solid #a8a48f;margin:0 0 14px;overflow:hidden;}
+.progress i{display:block;height:100%;width:0;border-radius:6px;
+  background:linear-gradient(90deg,#7bb442,#4a8a1f);transition:width .4s ease;}
+
+/* =========================================================================
+   6. ACHIEVEMENT PAZIŅOJUMS
+   ========================================================================= */
+#achievement{
+  position:absolute;right:14px;bottom:-140px;z-index:300;width:min(88vw,320px);
+  display:flex;align-items:center;gap:14px;padding:14px 16px;
+  background:linear-gradient(#20232a,#0e1015);color:#fff;border:1px solid #3a3f4a;
+  border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.6);
+  transition:bottom .55s cubic-bezier(.2,.9,.25,1);
+}
+#achievement.show{bottom:52px;}
+/* iekšējais paziņojuma logs (aizstāj alert) */
+#popup-overlay{
+  display:none;position:fixed;inset:0;z-index:2000;
+  background:rgba(0,0,0,.4);align-items:center;justify-content:center;
+}
+#popup-overlay.show{display:flex;}
+#popup-box{position:static;transform:none;opacity:1;pointer-events:auto;max-width:min(90vw,380px);animation:qIn .25s ease;}
+.ach-badge{
+  width:46px;height:46px;flex:none;border-radius:10px;display:flex;align-items:center;justify-content:center;
+  font-size:24px;background:linear-gradient(135deg,#f4c430,#e08a1e);box-shadow:0 0 14px rgba(244,196,48,.55);
+}
+.ach-t h4{margin:0 0 3px;font-size:14px;color:#ffd964;}
+.ach-t p{margin:0;font-size:12px;color:#cfd3db;}
+
+/* =========================================================================
+   7. SERTIFIKĀTS
+   ========================================================================= */
+.cert{
+  position:relative;background:#fffdf6;color:#1a2440;text-align:left;
+  padding:26px 26px 20px;border:3px double var(--xp-border);border-radius:4px;
+  background-image:radial-gradient(circle at 12% 8%, rgba(244,196,48,.10), transparent 40%),
+                   radial-gradient(circle at 88% 92%, rgba(0,88,230,.08), transparent 40%);
+}
+.cert-ribbon{
+  position:absolute;top:14px;right:-4px;background:linear-gradient(#e0392b,#a51b0f);color:#fff;
+  font-size:11px;font-weight:bold;letter-spacing:1px;padding:5px 14px;border-radius:3px 0 0 3px;
+  box-shadow:0 3px 6px rgba(0,0,0,.25);
+}
+.cert-ribbon::after{content:"";position:absolute;right:0;top:100%;border:5px solid transparent;border-top-color:#7a1409;border-right-color:#7a1409;}
+.cert-kicker{text-align:center;font-size:11px;letter-spacing:3px;color:#8a6d1a;text-transform:uppercase;}
+.cert-header{text-align:center;font-size:24px;font-weight:bold;color:var(--xp-blue);margin:4px 0 2px;line-height:1.15;}
+.cert-cake{display:block;margin:12px auto;max-width:150px;max-height:120px;object-fit:contain;
+  border:2px solid var(--xp-gold);border-radius:8px;background:#fff;}
+.cert-cake.missing{width:150px;height:110px;border-style:dashed;color:#a98f3a;font-size:11px;
+  display:flex;align-items:center;justify-content:center;text-align:center;padding:8px;}
+.cert-name{
+  text-align:center;font-size:34px;font-weight:bold;letter-spacing:2px;color:#0a2f78;
+  margin:6px 0 4px;padding-bottom:6px;border-bottom:2px solid var(--xp-gold);
+}
+.cert-sub{text-align:center;font-size:13px;color:#555;margin:0 0 14px;}
+.cert-body{font-size:13.5px;line-height:1.55;margin-bottom:12px;}
+.cert-ach-head{font-weight:bold;font-size:13px;color:var(--xp-blue);
+  text-align:center;margin:2px 0 6px;letter-spacing:.5px;}
+.cert-jokes-head{font-family:"Comic Sans MS",cursive;font-size:13px;color:#b0560a;
+  text-align:center;margin:12px 0 6px;}
+.cert-list{list-style:none;margin:0 0 14px;padding:0;font-style:italic;}
+.cert-list.cert-ach{font-style:normal;}
+.cert-list li{font-size:12.5px;line-height:1.4;padding:6px 0 6px 4px;border-bottom:1px dashed #e2ddc8;}
+.cert-sign{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;margin-top:16px;flex-wrap:wrap;}
+.cert-seal{
+  width:74px;height:74px;flex:none;border:2px dashed var(--xp-blue);border-radius:50%;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  font-size:10px;font-weight:bold;color:var(--xp-blue);transform:rotate(-10deg);text-align:center;
+}
+.cert-seal b{font-size:15px;}
+.sig{text-align:right;}
+.sig .name{font-family:"Comic Sans MS","Segoe Script",cursive;font-size:20px;color:#12326e;}
+.sig .role{border-top:1px solid #000;font-size:11px;margin-top:4px;padding-top:3px;display:inline-block;min-width:150px;}
+.cert-seal-tl{position:absolute;top:14px;left:14px;margin:0;transform:rotate(-10deg);z-index:2;}
+.cert-bday{margin-top:18px;text-align:center;padding:14px 16px;border:1px dashed var(--xp-gold);
+  border-radius:8px;background:linear-gradient(#fffdf2,#fdf3d6);}
+.cert-bday-title{font-size:18px;font-weight:bold;color:#b0560a;margin-bottom:6px;line-height:1.25;}
+.cert-bday-text{font-size:12.5px;line-height:1.55;color:#2a2440;margin:0 0 10px;}
+.cert-bday .sig{display:inline-block;text-align:center;}
+.cert-bday .sig .name{font-size:18px;}
+.cert-bday .sig .role{min-width:120px;text-align:center;}
+.cert-letter{margin-top:18px;padding:16px;border:1px dashed #d8cfa8;border-radius:8px;
+  background:linear-gradient(#fffef9,#fbf7e9);}
+.letter-top{display:flex;align-items:center;gap:14px;margin-bottom:10px;}
+.letter-cats{flex:none;display:flex;gap:12px;}
+.pet{display:flex;flex-direction:column;align-items:center;gap:5px;}
+.pet img{width:60px;height:60px;object-fit:cover;border-radius:50%;border:2px solid var(--xp-blue);background:#fff;}
+.pet img.missing{border-style:dashed;}
+.pet .paw{font-family:"Comic Sans MS",cursive;font-size:11px;color:#12326e;}
+.arrow-line{flex:none;font-size:32px;line-height:1;color:var(--xp-blue);}
+.letter-head{font-family:"Comic Sans MS",cursive;font-size:14px;color:#12326e;line-height:1.3;}
+.letter-msg{text-align:left;}
+.letter-body{font-size:12.5px;line-height:1.55;color:#2a2440;margin:0 0 8px;}
+.letter-sign{text-align:right;font-family:"Comic Sans MS",cursive;font-size:12px;color:#12326e;}
+
+@media(max-width:520px){
+  .letter-top{flex-direction:column;text-align:center;gap:8px;}
+  .arrow-line{transform:rotate(90deg);}
+}
+.cert-actions{margin-top:18px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+
+@media(max-width:520px){
+  .win-content{padding:16px 14px 20px;}
+  .q-title{font-size:16px;}
+  .cert-name{font-size:28px;}
+}
+
+/* boot kursors */
+.booting,.booting *{cursor:wait !important;}
+
+/* ---- IESLĒGŠANĀS (BOOT) EKRĀNS ---- */
+#boot-screen{
+  display:none;position:fixed;inset:0;z-index:5000;
+  background:radial-gradient(circle at 50% 40%,#1a1f2e,#000 80%);
+  flex-direction:column;align-items:center;justify-content:center;gap:34px;color:#fff;
+}
+#boot-screen.show{display:flex;}
+.boot-logo{text-align:center;}
+.boot-brand{font-size:44px;font-weight:bold;letter-spacing:1px;
+  background:linear-gradient(#fff,#cfe0ff);-webkit-background-clip:text;background-clip:text;color:transparent;
+  text-shadow:0 2px 10px rgba(120,160,255,.35);}
+.boot-brand span{color:#ff8a00;-webkit-text-fill-color:#ff8a00;margin-left:6px;font-style:italic;}
+.boot-sub{margin-top:6px;font-size:13px;color:#9fb4d8;}
+.boot-bar{width:220px;height:20px;border:2px solid #2b3a5c;border-radius:11px;
+  padding:3px;background:#0a0f1c;overflow:hidden;}
+.boot-bar-track{display:flex;gap:5px;height:100%;animation:bootSlide 1.3s linear infinite;}
+.boot-bar-track i{width:16px;height:100%;border-radius:3px;flex:none;
+  background:linear-gradient(#7fb0ff,#2f6fe0);box-shadow:0 0 6px #4d8bff;}
+@keyframes bootSlide{from{transform:translateX(-30px);}to{transform:translateX(30px);}}
+.boot-copy{font-size:12px;color:#7f93b8;letter-spacing:.3px;}
+
+/* ---- KRITISKĀS KĻŪDAS LOGS ---- */
+.error-bar{background:linear-gradient(#c0271a,#8f1408) !important;}
+.error-icon{width:42px;height:42px;flex:none;border-radius:50%;
+  background:linear-gradient(#e0392b,#a51b0f);color:#fff;font-size:24px;font-weight:bold;
+  display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,.4);}
+
+/* ---- KONFETI ---- */
+.confetti-box{position:fixed;inset:0;pointer-events:none;z-index:4000;overflow:hidden;}
+.confetti-box i{position:absolute;top:-16px;width:10px;height:14px;
+  animation:confettiFall linear forwards;}
+@keyframes confettiFall{
+  0%{transform:translateY(-20px) rotate(0);opacity:1;}
+  100%{transform:translateY(105vh) rotate(720deg);opacity:.9;}
+}
+
+@media print{.cert-actions,.taskbar,#achievement{display:none !important;}}
+</style>
+</head>
+<body>
+
+<!-- ========================================================================
+     0. IESLĒGŠANĀS EKRĀNS (XP boot) — parādās pēc pieteikšanās uz dažām sek.
+     Ilgumu maini JS mainīgajā BOOT_DURATION. ======================================================================== -->
+<div id="boot-screen">
+  <div class="boot-logo">
+    <div class="boot-brand">Windows<span>XP</span></div>
+    <div class="boot-sub">Gunārs Survival Edition</div>
+  </div>
+  <div class="boot-bar"><div class="boot-bar-track"><i></i><i></i><i></i></div></div>
+  <div class="boot-copy">Searching for Gunārs's car keys... please wait</div>
+</div>
+
+<audio id="xp-sound" src="https://www.myinstants.com/media/sounds/windows-xp-startup.mp3" preload="auto"></audio>
+<!-- KĻŪDAS SKAŅA — atskan, kad parādās kritiskās kļūdas logs.
+     Ja gribi citu skaņu, nomaini src uz savu failu (piem. ./error.mp3). -->
+<audio id="error-sound" src="https://www.myinstants.com/media/sounds/erro.mp3" preload="auto"></audio>
+
+<!-- ========================================================================
+     1. PIETEIKŠANĀS
+     ======================================================================== -->
+<div id="login-screen">
+  <div class="login-topbar"></div>
+  <div class="login-brand">
+    <div class="logo">Windows<span>XP</span></div>
+    <div class="tag">Birthday Edition</div>
+  </div>
+  <div class="login-users">
+    <div class="user-tile" tabindex="0" role="button" onclick="login()" onkeydown="if(event.key==='Enter'||event.key===' ')login()">
+      <!-- Gunāra profila bilde: ./gunars.jpg (ja nav — rāda 🎂) -->
+      <div class="user-avatar">🎂</div>
+      <div>
+        <div class="user-name">Gunārs</div>
+        <div class="user-hint">Click to log in</div>
+      </div>
+    </div>
+  </div>
+  <div class="login-botbar">To shut down the computer, please sing the Windows XP shutdown melody loudly.</div>
+</div>
+
+<!-- ========================================================================
+     2. DARBVIRSMA
+     ======================================================================== -->
+<div id="desktop">
+  <div id="wallpaper-fallback"></div>
+  <!-- Wallpaper bilde: nomaini src uz savu failu -->
+  <img id="wallpaper" src="./wallpaper.jpg" alt="" onerror="this.style.display='none'">
+
+  <!-- ========================================================================
+       DARBVIRSMAS IKONAS — kļūdas logs "izdzēš" pa vienai (skat. closeError).
+       Vari pievienot/noņemt ikonas šeit. Katrai ir emoji + nosaukums. ======================================================================== -->
+  <div id="desktop-icons">
+    <div class="desk-icon"><div class="di-img">🗑️</div><div class="di-label">Recycle Bin</div></div>
+    <div class="desk-icon"><div class="di-img">📁</div><div class="di-label">My Documents</div></div>
+    <div class="desk-icon"><div class="di-img">💾</div><div class="di-label">Old Backups</div></div>
+    <div class="desk-icon"><div class="di-img">🎮</div><div class="di-label">Games</div></div>
+    <div class="desk-icon"><div class="di-img">🌐</div><div class="di-label">Internet</div></div>
+    <div class="desk-icon"><div class="di-img">🎵</div><div class="di-label">My Music</div></div>
+    <div class="desk-icon"><div class="di-img">📷</div><div class="di-label">Old Photos</div></div>
+    <div class="desk-icon"><div class="di-img">📝</div><div class="di-label">Notes.txt</div></div>
+  </div>
+
+  <!-- ITEKSHA (in-page) PAZIŅOJUMA LOGS — aizstāj sistēmas alert(), lai
+       paziņojumi vienmēr būtu redzami. Teksts tiek ielikts ar showPopup(). -->
+  <div id="popup-overlay">
+    <div id="popup-box" class="window" role="alertdialog" aria-modal="true">
+      <div class="title-bar">
+        <span class="ico">💬</span>
+        <span class="t">Notification</span>
+      </div>
+      <div class="win-content">
+        <p id="popup-msg" style="margin:0 0 16px;font-size:14px;line-height:1.5;"></p>
+        <button class="xp-btn primary" onclick="closePopup()">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       KRITISKĀS KĻŪDAS LOGS — parādās uzreiz pēc boot ekrāna.
+       Teksts un virsraksts maināmi zemāk. Kad nospiež OK (closeError()),
+       parādās Mandatory System Survey logs. ======================================================================== -->
+  <div id="error-dialog" class="window">
+    <div class="title-bar error-bar">
+      <span class="ico">❌</span>
+      <span class="t">System Error</span>
+      <div class="title-controls">
+        <button class="win-btn win-x" onclick="closeError()" aria-label="Close">✕</button>
+      </div>
+    </div>
+    <div class="win-content" style="text-align:left;">
+      <div style="display:flex;gap:14px;align-items:flex-start;">
+        <div class="error-icon">✖</div>
+        <div>
+          <!-- KĻŪDAS VIRSRAKSTS -->
+          <h2 style="margin:0 0 8px;color:#c0271a;font-size:16px;">Critical Error 0xNOPE_0031</h2>
+          <!-- KĻŪDAS TEKSTS -->
+          <p style="margin:0 0 6px;font-size:14px;line-height:1.5;">
+            A fatal exception has occurred in module <b>GUNARS.SYS</b>.
+          </p>
+          <p style="margin:0 0 16px;font-size:14px;line-height:1.5;">
+            The system cannot continue — mostly because it simply doesn't want to.
+          </p>
+          <p style="margin:0 0 16px;font-size:14px;line-height:1.5;">
+            Press OK or X to delete all your desktop icons. Every single one.
+          </p>
+        </div>
+      </div>
+      <div style="text-align:center;">
+        <button class="xp-btn primary" onclick="closeError()">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- BRĪDINĀJUMA LOGS -->
+  <div id="warning" class="window">
+    <div class="title-bar">
+      <span class="ico">⚠️</span>
+      <span class="t">Mandatory System Age Survey</span>
+      <div class="title-controls">
+        <button class="win-btn win-x close-x" onclick="pokeX()" aria-label="Close">✕</button>
+      </div>
+    </div>
+    <div class="win-content">
+      <h2 style="margin:0 0 6px;color:#c0271a;">System Warning!</h2>
+      <p style="font-weight:bold;color:#c0271a;margin:0 0 10px;">Do not try to bypass this survey.</p>
+      <p style="margin:0 0 16px;font-size:14px;line-height:1.5;">
+        To unlock the desktop, the user <b>Gunārs</b> must complete the
+        age verification and life-experience survey. It's a new law, recently introduced.
+      </p>
+      <button class="xp-btn primary" onclick="startQuiz()">Start survey</button>
+    </div>
+  </div>
+
+  <!-- APTAUJAS LOGS -->
+  <div id="quiz" class="window">
+    <div class="title-bar">
+      <span class="ico">📋</span>
+      <span class="t" id="quiz-title">Survey · Question 1 of 11</span>
+      <div class="title-controls">
+        <button class="win-btn" aria-label="Minimize" onclick="wobbleQuiz()">_</button>
+        <button class="win-btn win-x close-x" onclick="pokeXQuiz()" aria-label="Close">✕</button>
+      </div>
+    </div>
+    <div class="win-content">
+      <div class="progress"><i id="progress-bar"></i></div>
+
+      <!-- Q1 -->
+      <div id="q1" class="screen active">
+        <!-- ═══════════════════════════════════════════════════════════════
+             POGU EFEKTI: klase "fx-..." katrai pogai nosaka hover animāciju.
+             Pilns pieejamo efektu saraksts ir CSS daļā (sadaļa "5. VIZUĀLIE
+             EFEKTI"). Vari nomainīt jebkuru "fx-..." pret citu no tā saraksta.
+             Der arī q-title (jautājuma virsraksts) — tam var pielikt fx-...
+             ═══════════════════════════════════════════════════════════════ -->
+        <span class="q-num">Question 1</span> <!-- Kasete un zīmulis -->
+        <div class="q-title fx-wobble">What is this mysterious object?</div>
+        <div class="q-img-wrap"><img class="q-img" data-ph="Image: q1.jpg" src="./q1.jpg" alt=""></div>
+        <div class="options">
+          <button class="xp-btn fx-flee" onclick="escapeText(this, event)">No idea, never seen it in my life.</button>
+          <button class="xp-btn fx-jelly" onclick="nextQ(2)">Just some random old thing.</button>
+          <button class="xp-btn fx-jelly" onclick="nextQ(2)">The best fun a kid could ask for!</button>
+        </div>
+      </div>
+
+      <!-- Q2 -->
+      <div id="q2" class="screen"> 
+        <span class="q-num">Question 2</span> <!-- Par vecumu -->
+        <div class="q-title fx-wobble">Are you getting old?</div>
+        <div class="q-img-wrap"><img class="q-img" data-ph="Image: q2.jpg" src="./q2.jpg" alt=""></div>
+        <div class="runaway-wrap" onmousemove="maybeDodge(event)">
+          <button class="xp-btn primary" onclick="nextQ(3)">Unfortunately yes.</button>
+          <button id="runaway" class="xp-btn" onmouseover="dodge()" onclick="dodge()">Nope, I’m officially getting younger now.</button>
+        </div>
+      </div>
+
+      <!-- Q3 --> 
+      <div id="q3" class="screen">
+        <span class="q-num">Question 3</span> <!-- Sony Xperia U -->
+        <div class="q-title marq"><b>Does the keyboard still work in vertical position — the middle line?</b></div>
+        <div class="q-img-wrap"><img class="q-img" data-ph="Image: q3.jpg" src="./q3.jpg" alt=""></div>
+        <div class="options">
+          <button class="xp-btn fx-bounce" onclick="nextQ(4)">Absolutely, it works perfectly.</button>
+          <button class="xp-btn fx-swing" onclick="nextQ(4)">No idea, too much time has passed.</button>
+          <button class="xp-btn fx-jelly" onclick="nextQ(4)">Not a clue — what are you even talking about?</button>
+        </div>
+      </div>
+
+      <!-- Q4 -->
+      <div id="q4" class="screen">
+        <span class="q-num">Question 4</span> <!-- ATC Jautājums -->
+        <div class="q-title fx-wobble">ATC simulation: 5 planes approach the runway at once. What do you do?</div>
+        <div class="q-img-wrap"><img class="q-img" data-ph="Image: q4.jpg" src="./q4.jpg" alt=""></div>
+        <div class="options">
+          <button class="xp-btn fx-flip" onclick="nextQ(5)">Calmly line up all five — it's my daily routine.</button>
+          <button class="xp-btn fx-glow" onclick="nextQ(5)">Start wondering how fast I could outrun them.</button>
+          <button class="xp-btn fx-pulse" onclick="nextQ(5)">Switch on autopilot and sip my coffee.</button>
+        </div>
+      </div>
+
+      <!-- Q5 -->
+      <div id="q5" class="screen">
+        <span class="q-num">Question 5</span> <!-- Marataos-->
+        <div class="q-title curve"><b>Let's talk marathons and running — what's your real reason for doing it?</b></div>
+        <div class="q-img-wrap"><img class="q-img" data-ph="Image: q5.jpg" src="./q5.jpg" alt=""></div>
+        <div class="options">
+          <button class="xp-btn fx-slide" onclick="nextQ(6)">I just want the free banana.</button>
+          <button class="xp-btn fx-jelly" onclick="nextQ(6)">I do not know why I'm doing it and I cannot stop it anymore.</button>
+          <button class="xp-btn fx-bounce" onclick="nextQ(6)">To get out of the house and pretend that I'm doing something.</button>
+        </div>
+      </div>
+
+      <!-- Q6 -->
+      <div id="q6" class="screen">
+        <span class="q-num">Question 6</span> <!-- Par pagātni -->
+        <div class="q-title fx-wobble">If you could go back into the past, what would you do?</div>
+        <div class="q-img-wrap"><img class="q-img" data-ph="Image: q6.jpg" src="./q6.jpg" alt=""></div>
+        <div class="options">
+          <button class="xp-btn" onclick="nextQ(7)"><span class="reverse-text">Prevent the whole "Laura Dārziņa" injury simulation.</span></button>
+          <button class="xp-btn" onclick="nextQ(7)"><span class="reverse-text">Be Neo (from The Matrix) and actually make the rooftop run this time — while escaping from Sharky.</span></button>
+          <button class="xp-btn" onclick="nextQ(7)"><span class="reverse-text">Build another Sharky house with the cousins.</span></button>
+        </div>
+      </div>
+
+      <!-- Q7 -->
+      <div id="q7" class="screen">
+        <span class="q-num">Question 7</span> <!-- Par auto -->
+        <div class="q-title fx-wobble">What is your dream car?</div>
+        <div class="q-img-wrap"><img class="q-img" data-ph="Image: q7.jpg" src="./q7.jpg" alt=""></div>
+        <div class="options">
+          <button class="xp-btn fx-bounce" onclick="playNissan();nextQ(8)">🚗 “Nissan 240SX”</button>
+          <button class="xp-btn fx-swing" onclick="playMercedes();nextQ(8)">🚗 “Mercedes-Benz 190E (in blue, with a half-broken exhaust)”</button>
+          <button class="xp-btn fx-tilt3d" onclick="playLada();nextQ(8)">🚗 “Backyard-Built 'LADA'”</button>
+        </div>
+      </div>
+
+      <!-- Q8 -->
+      <div id="q8" class="screen">
+        <span class="q-num">Question 8</span> <!-- Par ATC un auto smieklīgs jautājums-->
+        <div class="q-title fx-wobble">You're late, stuck in traffic, AND air traffic control is calling on the radio. Priority?</div>
+        <div class="q-img-wrap"><img class="q-img" data-ph="Image: q8.jpg" src="./q8.jpg" alt=""></div>
+        <div class="options">
+          <button class="xp-btn fx-flip" onclick="nextQ(9)">Guide the planes first — the cars can wait, they're not flying.</button>
+          <button class="xp-btn fx-pulse" onclick="nextQ(9)">Find a shortcut and pretend the radio is just background noise.</button>
+          <button class="xp-btn fx-slide" onclick="nextQ(9)">Rev the engine so loud that both problems solve themselves.</button>
+        </div>
+      </div>
+
+      <!-- Q9 (paslēptā poga) -->
+      <div id="q9" class="screen">
+        <span class="q-num">Question 9</span>  <!-- Paliek-->
+        <div class="q-title fx-wobble">Find the way to the runway. (Hint: the button is playing hide-and-seek. It's winning.)</div>
+        <div class="q-img-wrap"><img class="q-img" data-ph="Image: q9.jpg" src="./q9.jpg" alt=""></div>
+        <div class="options">
+          <button class="xp-btn fx-shrink" onclick="nextQ(10)"
+                  style="color:var(--xp-bg);background:var(--xp-bg);border-color:var(--xp-bg);box-shadow:none;"
+                  onmouseover="this.style.color='#000';this.style.background='linear-gradient(#fff8ef,#ffe2b8)';this.style.borderColor='#e6820a';"
+                  onmouseout="this.style.color='var(--xp-bg)';this.style.background='var(--xp-bg)';this.style.borderColor='var(--xp-bg)';">
+            Landing cleared!
+          </button>
+        </div>
+      </div>
+
+      <!-- Q10 (boss klikšķi) -->
+      <div id="q10" class="screen">  <!-- Paliek-->
+        <span class="q-num">Question 10</span>
+        <div class="q-title fx-wobble">Start the engine — turn the key 3 times! (An old motor doesn't start right away.)</div>
+        <div class="q-img-wrap"><img class="q-img" data-ph="Image: q10.jpg" src="./q10.jpg" alt=""></div>
+        <p id="boss-text" class="hint" style="color:#c0271a;">&nbsp;</p>
+        <button class="xp-btn primary fx-shake fx-keep" id="boss-btn" onclick="bossClick()">START ENGINE (0/3)</button>
+      </div>
+
+      <!-- Q11 (vecuma verifikācija) -->
+      <div id="q11" class="screen">
+        <span class="q-num">Question 11 · final</span>
+        <div class="q-title fx-wobble">Final age verification</div>
+        <p class="hint">Select your <b>real age</b> from the list and confirm.</p>
+        <select id="age-select" size="7"
+                style="width:170px;font-size:15px;margin:6px auto 14px;padding:6px;display:block;border:1px solid #7a9bd0;border-radius:4px;"></select>
+        <div id="age-msg" class="hint" style="min-height:18px;color:#c0271a;">&nbsp;</div>
+        <button class="xp-btn primary" onclick="verifyAge()">Confirm age</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ACHIEVEMENT -->
+  <div id="achievement" role="status" aria-live="polite">
+    <div class="ach-badge">🏆</div>
+    <div class="ach-t">
+      <h4>Achievement Unlocked!</h4>
+      <p>Level 32 reached — “Verification complete”.</p>
+    </div>
+  </div>
+
+  <!-- SERTIFIKĀTS -->
+  <div id="cert-window" class="window wide">
+    <div class="title-bar">
+      <span class="ico">📜</span>
+      <span class="t">Official Certificate</span>
+      <div class="title-controls">
+        <button class="win-btn win-x" id="cert-x" onclick="certCloseGag()" aria-label="Close">✕</button>
+      </div>
+    </div>
+    <div class="win-content">
+      <div class="cert" id="cert-export">
+        <!-- 32 VERIFIED zīmogs augšējā KREISAJĀ stūrī (pretī LEVEL 32 lentei) -->
+        <div class="cert-seal cert-seal-tl"><b>32</b><span>VERIFIED</span></div>
+        <div class="cert-ribbon">LEVEL 32</div>
+        <div class="cert-kicker">Official Certificate of Longevity</div>
+        <div class="cert-header">Certificate of Longevity</div>
+
+        <!-- Kūkas bilde: ./cake.jpg -->
+        <img class="cert-cake" data-ph="Image: cake.jpg" src="./cake.jpg" alt="">
+
+        <div class="cert-name">GUNĀRS</div>
+        <div class="cert-sub">has officially reached the age of <b>32</b> · Level 32</div>
+
+        <p class="cert-body">
+          Has successfully survived 32 years on planet Earth, can identify any car with just a glance,
+          directed air traffic at altitude without breaking a sweat, ran a
+          marathon because apparently driving wasn't an option, and unlocked <b>Level 32</b> status.
+          Warranty on the original parts has officially expired.
+        </p>
+
+        <div class="cert-ach-head">🏆 Achievements</div>
+        <ul class="cert-list cert-ach">
+          <li>🔧 <b>Certified mechanic (unofficially):</b> has opened the hood and nodded knowingly.</li>
+          <li>🏁 <b>Survived every group run:</b> and lived to complain about it.</li>
+          <li>🛫 <b>Frequent sky-watcher:</b> can spot a plane before he hears it.</li>
+        </ul>
+
+        <div class="cert-jokes-head">😹 Unofficial achievements</div>
+        <ul class="cert-list">
+          <li>🏆 Successfully parallel parked on the first try — once. Witnesses are still in shock.</li>
+          <li>🥇 Holds the household record for saying "we're leaving in five minutes" (current best: 45 min).</li>
+          <li>🎖️ Can fall asleep in under 60 seconds, anywhere, except when actually going to bed.</li>
+          <li>🚀 World-class at explaining exactly why the other driver was wrong.</li>
+        </ul>
+
+        <!-- DZIMŠANAS DIENAS APSVEIKUMS + ĢIMENES PARAKSTS -->
+        <div class="cert-bday">
+          <div class="cert-bday-title">🎉 Happy Birthday, Gunārs! 🎂</div>
+          <p class="cert-bday-text">
+            All jokes aside — happy 32nd birthday! I hope you have an amazing day and an even better year ahead.
+          </p>
+          <div class="sig">
+            <div class="name">The Ķekava crew</div>
+            <div class="role">With love,</div>
+          </div>
+        </div>
+
+        <!-- Vēstule: mani divi kaķi -> Gunāra sunim -->
+        <div class="cert-letter">
+          <!-- Augšējā rinda: kaķi -> bultiņa -> virsraksts -->
+          <div class="letter-top">
+            <div class="letter-cats">
+              <div class="pet">
+                <!-- Pirmā kaķa bilde: ./cat1.jpg -->
+                <img data-ph="cat1.jpg" src="./cat1.jpg" alt="">
+                <span class="paw">🐱 Cat No. 1</span>
+              </div>
+              <div class="pet">
+                <!-- Otrā kaķa bilde: ./cat2.jpg -->
+                <img data-ph="cat2.jpg" src="./cat2.jpg" alt="">
+                <span class="paw">🐱 Cat No. 2</span>
+              </div>
+            </div>
+            <span class="arrow-line" aria-hidden="true">➜</span>
+            <div class="letter-head">A message from my cats<br>to your dog 🐾</div>
+          </div>
+          <!-- Ziņas teksts zem visa -->
+          <div class="letter-msg">
+            <p class="letter-body">
+              Dear dog! We don't know each other and probably never will
+              (we don't leave the house on principle). Still, we're truly happy about your human,
+              whose birthday is today. We hope he tosses you at least <b>32 treats</b> —
+              one for each year. If not — remind him that we cats see everything. 🐾
+            </p>
+            <div class="letter-sign">— Respectfully (and with mild arrogance), your two cat friends 🐱🐱</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cert-actions">
+        <button class="xp-btn primary" onclick="saveCert()">💾 Save as image</button>
+        <button class="xp-btn" onclick="window.print()">🖨️ Print certificate</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TASKBAR -->
+  <div class="taskbar">
+    <div class="start-btn"><span class="start-orb"></span>start</div>
+    <div class="tray" id="clock">--:--</div>
+  </div>
+</div>
+
+<script>
+"use strict";
+
+/* ==========================================================================
+   ⚙️ IESTATĪJUMI — ŠOS VISBIEŽĀK VAJADZĒS MAINĪT
+   --------------------------------------------------------------------------
+   REAL_AGE     = pareizais vecums (jubilārs). Maini uz vajadzīgo skaitli.
+   TOTAL_Q      = cik jautājumu ir aptaujā (pašlaik 11).
+   BOOT_DURATION= cik ilgi (ms) rādās XP ieslēgšanās (boot) ekrāns ar
+                  ielādes joslu. 3500 = 3.5 sekundes.
+   (Piezīme: POPUP_DELAY vairs netiek lietots — tagad pēc boot uzreiz
+    parādās kļūdas logs, un aptauja pēc tam, kad nospiež OK.)
+   ========================================================================== */
+const REAL_AGE = 32;          // <-- PAREIZAIS VECUMS
+const TOTAL_Q  = 11;          // <-- JAUTĀJUMU SKAITS
+const BOOT_DURATION = 3500;   // <-- BOOT EKRĀNA ILGUMS (ms)
+
+/* ==========================================================================
+   🧪 TESTA REŽĪMS — ĀTRAI LABOŠANAI
+   --------------------------------------------------------------------------
+   Kad TEST_MODE = true, lapa PĀRLEC uzreiz uz vienu norādīto sadaļu
+   (nav jāiziet cauri visam no sākuma). Ērti, ja gribi labot tikai vienu logu.
+   Kad būsi pabeidzis, uzliec atpakaļ TEST_MODE = false!
+
+   TEST_SCREEN iespējamās vērtības:
+     'login'   = pieteikšanās ekrāns (sākums)
+     'boot'    = XP ieslēgšanās (boot) ekrāns
+     'error'   = kritiskās kļūdas logs
+     'warning' = obligātās aptaujas brīdinājuma logs
+     'quiz'    = aptauja (sākas ar 1. jautājumu)
+     'quizN'   = konkrēts jautājums, piem. 'quiz5' = 5. jautājums
+     'cert'    = gala sertifikāts (ar konfeti)
+   ========================================================================== */
+const TEST_MODE   = false;    // <-- uzliec true, lai testētu vienu sadaļu
+const TEST_SCREEN = 'cert';   // <-- kuru sadaļu atvērt, kad TEST_MODE = true
+
+/* ==========================================================================
+   🎬 POGU EFEKTI — ŠEIT VIENUVIET MAINI KATRA JAUTĀJUMA POGU EFEKTUS
+   --------------------------------------------------------------------------
+   Katram jautājumam ('q1'..'q11') ir saraksts ar efektu nosaukumiem —
+   pa vienam katrai atbildes pogai TĀDĀ PAŠĀ SECĪBĀ, kā pogas parādās.
+   Vienkārši nomaini nosaukumu, lai mainītu efektu. Piem. 'shake' -> 'flip'.
+
+   PIEEJAMIE EFEKTI (nosaukumi bez 'fx-' priekšā):
+     shake, spin, shrink, wobble, jelly, tilt3d, flip, slide,
+     glow, bounce, swing, pulse
+   (Pilns apraksts CSS sadaļā "5. VIZUĀLIE EFEKTI".)
+
+   ĪPAŠĀS POGAS (NEMAINI ar šo — tām ir sava loģika):
+     - Q1 pirmā poga = teksta-aizbēgšanas poga (fx-flee)
+     - Q2 otrā poga = bēgošā poga
+     - Q9 poga = paslēptā poga
+     - Q10 poga = boss poga (jāspiež 3x)
+   Šīs pogas šajā sarakstā atzīmētas ar null (tās tiek izlaistas).
+   ========================================================================== */
+const Q_EFFECTS = {
+  q1: [null, 'jelly', 'jelly'],   // 1. poga = flee (izlaižam), pārējās jelly
+  q3: ['bounce', 'swing', 'jelly'],
+  q4: ['flip', 'glow', 'pulse'],
+  q5: ['slide', 'jelly', 'bounce'],
+  // q6: pogām apgrieztais teksts — hover atgriež to lasāmu, tāpēc efektus neliekam
+  q7: ['bounce', 'swing', 'tilt3d'],
+  q8: ['flip', 'pulse', 'slide'],
+  // q2, q9, q10 = īpašās pogas (netiek mainītas šeit)
+};
+
+/* Piemēro Q_EFFECTS pogām: katrai jautājuma pogai noņem vecās fx- klases
+   un pieliek jauno. Palaižas automātiski, kad lapa ielādējusies. */
+function applyQEffects(){
+  Object.keys(Q_EFFECTS).forEach(qid=>{
+    const q=$(qid); if(!q) return;
+    // ņemam tikai parastās pogas (izlaižam bēgošo pogu ar data-flee un #runaway)
+    const btns=[...q.querySelectorAll('.xp-btn')].filter(b=>!b.hasAttribute('data-flee') && b.id!=='runaway');
+    Q_EFFECTS[qid].forEach((fx,i)=>{
+      const b=btns[i]; if(!b || !fx) return;
+      // noņem visas esošās fx- klases
+      [...b.classList].forEach(c=>{ if(c.startsWith('fx-')) b.classList.remove(c); });
+      b.classList.add('fx-'+fx);  // pieliek jauno efektu
+    });
+  });
+}
+
+/* ---- PALĪGFUNKCIJAS ----
+   $(id)  = ātrs veids, kā atrast elementu pēc tā id.
+   show() / hide() = parāda vai paslēpj logu (pievieno/noņem klasi 'show'). */
+const $ = id => document.getElementById(id);
+function show(id){ $(id).classList.add('show'); }
+function hide(id){ $(id).classList.remove('show'); }
+
+/* ==========================================================================
+   🔊 SKAŅAS EFEKTI (ģenerēti ar Web Audio — nav vajadzīgi faili)
+   --------------------------------------------------------------------------
+   playPopSound()   = īss "blēkšķis", kad parādās paziņojums/logs (Xbox stilā).
+   playCheerSound() = svinīga skaņa, kad parādās sertifikāts + konfeti.
+   Skaņas atskan tikai pēc tam, kad lietotājs jau klikšķinājis lapā
+   (pārlūku prasība), tāpēc šeit tas strādā (viss notiek pēc klikšķiem).
+   Lai skaņu izslēgtu, vari šo funkciju iekšpusē vienkārši uzlikt "return;".
+   ========================================================================== */
+let _actx=null;
+function _audioCtx(){
+  if(!_actx){ try{ _actx=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){ return null; } }
+  if(_actx.state==='suspended') _actx.resume();
+  return _actx;
+}
+// viens tonis ar norādīto frekvenci, laiku un formu
+function _tone(freq, start, dur, type, gainVal){
+  const ac=_audioCtx(); if(!ac) return;
+  const o=ac.createOscillator(), g=ac.createGain();
+  o.type=type||'sine'; o.frequency.value=freq;
+  const t0=ac.currentTime+start;
+  g.gain.setValueAtTime(0.0001, t0);
+  g.gain.exponentialRampToValueAtTime(gainVal||0.2, t0+0.02);
+  g.gain.exponentialRampToValueAtTime(0.0001, t0+dur);
+  o.connect(g); g.connect(ac.destination);
+  o.start(t0); o.stop(t0+dur+0.02);
+}
+// "blēkšķis" — divi ātri toņi (paziņojumam)
+function playPopSound(){
+  _tone(880, 0, 0.12, 'triangle', 0.18);
+  _tone(1320, 0.06, 0.14, 'triangle', 0.15);
+}
+// svinīga skaņa — augšupejoša fanfara (sertifikātam/konfeti)
+function playCheerSound(){
+  const notes=[523,659,784,1047]; // C E G C (augšup)
+  notes.forEach((f,i)=>_tone(f, i*0.12, 0.28, 'square', 0.16));
+  _tone(1568, 0.5, 0.5, 'triangle', 0.14); // noslēdzošais spožais tonis
+}
+
+/* ==========================================================================
+   🚗 MAŠĪNU DZINĒJU SKAŅAS (7. jautājums)
+   --------------------------------------------------------------------------
+   Katrai mašīnai sava skaņa, kad nospiež pogu:
+     playNissan()   = sportisks, augsts turbo/drift tonis
+     playMercedes() = vecs dzinējs ar salauztu izpūtēju (raupjš, sprakšķi)
+     playLada()     = klabošs, nestabils dzinējs (zems, klab)
+   Skaņas ģenerētas ar Web Audio (nav vajadzīgi faili).
+   ========================================================================== */
+function _engine(baseFreq, dur, wobble, type, gain){
+  const ac=_audioCtx(); if(!ac) return;
+  const o=ac.createOscillator(), g=ac.createGain(), lfo=ac.createOscillator(), lfoG=ac.createGain();
+  o.type=type||'sawtooth'; o.frequency.value=baseFreq;
+  // LFO liek dzinējam "rūkt" (frekvence viļņojas)
+  lfo.frequency.value=wobble||18; lfoG.gain.value=baseFreq*0.25;
+  lfo.connect(lfoG); lfoG.connect(o.frequency);
+  const t0=ac.currentTime;
+  g.gain.setValueAtTime(0.0001,t0);
+  g.gain.exponentialRampToValueAtTime(gain||0.16,t0+0.05);
+  g.gain.exponentialRampToValueAtTime(0.0001,t0+dur);
+  o.connect(g); g.connect(ac.destination);
+  o.start(t0); lfo.start(t0);
+  o.stop(t0+dur+0.05); lfo.stop(t0+dur+0.05);
+}
+function playNissan(){   // sportisks, augsts, ar apgriezienu kāpumu
+  _engine(180, 0.6, 30, 'sawtooth', 0.14);
+  _tone(420, 0.15, 0.4, 'sawtooth', 0.08);   // augšupejošs "rev"
+  _tone(620, 0.35, 0.35, 'sawtooth', 0.07);
+}
+function playMercedes(){ // vecs, raupjš, ar izpūtēja sprakšķiem
+  _engine(110, 0.7, 14, 'sawtooth', 0.15);
+  _tone(90, 0.2, 0.12, 'square', 0.12);      // sprakšķi
+  _tone(70, 0.4, 0.12, 'square', 0.12);
+  _tone(80, 0.55, 0.1, 'square', 0.1);
+}
+function playLada(){     // klabošs, nestabils, zems
+  _engine(85, 0.8, 9, 'square', 0.13);
+  _tone(60, 0.1, 0.08, 'square', 0.14);      // klaboņa
+  _tone(55, 0.28, 0.08, 'square', 0.14);
+  _tone(62, 0.46, 0.08, 'square', 0.14);
+  _tone(50, 0.64, 0.1, 'square', 0.12);      // noslīd (dzinējs "nomirst")
+}
+
+/* ---- STARTERA / DZINĒJA PALAIŠANAS SKAŅAS (10. jautājums) ----
+   playCrank() = starteris griežas, bet dzinējs NESĀK (klaboņa, kas apraujas).
+   playEngineStart() = dzinējs veiksmīgi iedarbojas un uzrūc (vroom!). */
+function playCrank(){
+  // "rrr-rrr" klaboņa, kas mēģina, bet apstājas
+  _tone(70, 0.0, 0.1, 'square', 0.14);
+  _tone(60, 0.14, 0.1, 'square', 0.14);
+  _tone(72, 0.28, 0.1, 'square', 0.13);
+  _tone(58, 0.42, 0.12, 'square', 0.12);     // apraujas
+}
+function playEngineStart(){
+  // starteris pagriežas, tad dzinējs "pieķeras" un uzrūc
+  _tone(70, 0.0, 0.1, 'square', 0.14);
+  _tone(64, 0.12, 0.1, 'square', 0.14);
+  _engine(120, 0.9, 22, 'sawtooth', 0.16);   // dzinējs iedarbojas
+  _tone(300, 0.35, 0.5, 'sawtooth', 0.10);   // uzrūc (rev)
+  _tone(520, 0.6, 0.4, 'sawtooth', 0.08);
+}
+
+/* ---- IZTRŪKSTOŠO BILŽU APSTRĀDE ----
+   Ja bilde (piem. q1.jpg vai cake.jpg) vēl nav pievienota mapē,
+   šeit tās vietā parādās glīts pārtraukts rāmītis ar bildes nosaukumu.
+   Nekas nesalūzt, ja bildes trūkst. */
+function markMissing(img){
+  const wrap = img.closest('.q-img-wrap');
+  const label = img.dataset.ph || 'Bilde';
+  if(img.classList.contains('q-img')){
+    img.classList.add('missing'); img.removeAttribute('src'); img.textContent='';
+    // aizstāj ar div, jo <img> nerāda tekstu
+    const ph = document.createElement('div');
+    ph.className='q-img missing'; ph.textContent='🖼️ '+label;
+    img.replaceWith(ph);
+  } else if(img.classList.contains('cert-cake')){
+    const ph=document.createElement('div'); ph.className='cert-cake missing'; ph.textContent='🎂 '+label; img.replaceWith(ph);
+  } else { // pet
+    img.classList.add('missing'); img.removeAttribute('src');
+  }
+}
+document.querySelectorAll('img[data-ph]').forEach(img=>{
+  img.addEventListener('error',()=>markMissing(img));
+  // ja src tukšs/nav ielādējies uzreiz
+  if(!img.getAttribute('src')) markMissing(img);
+});
+
+/* ---- PULKSTENIS UZDEVUMJOSLĀ ----
+   Rāda pašreizējo laiku labajā apakšējā stūrī, atjaunojas katru sekundi. */
+function tick(){
+  const d=new Date();
+  $('clock').textContent = d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0');
+}
+setInterval(tick,1000); tick();
+
+/* ---- PIETEIKŠANĀS + IESLĒGŠANĀS ANIMĀCIJA ----
+   Plūsma: nospiež plāksnīti -> boot ekrāns (BOOT_DURATION) -> kritiskās
+   kļūdas logs (ar skaņu) -> lietotājs nospiež OK (closeError) -> parādās
+   Mandatory System Survey (brīdinājuma logs). */
+let started=false;
+function login(){
+  if(started) return; started=true;
+  $('login-screen').style.display='none';
+
+  const a=$('xp-sound'); a.volume=0.5; a.play().catch(()=>{});
+  populateAges(1,99);
+
+  // 1) parādām boot ekrānu uz BOOT_DURATION ms
+  $('boot-screen').classList.add('show');
+  document.body.classList.add('booting');
+
+  setTimeout(()=>{
+    // 2) boot beidzas -> parādām darbvirsmu un kritiskās kļūdas logu ar skaņu
+    $('boot-screen').classList.remove('show');
+    $('desktop').style.display='block';
+    document.body.classList.remove('booting');
+
+    const err=$('error-sound'); err.volume=0.6; err.currentTime=0; err.play().catch(()=>{});
+    show('error-dialog');
+  }, BOOT_DURATION);
+}
+
+/* ---- KĻŪDAS LOGA AIZVĒRŠANA + IKONU DZĒŠANA ----
+   Nospiežot OK/✕, kļūdas logs aizveras un VISAS darbvirsmas ikonas
+   tiek izdzēstas viena pēc otras (ar nelielu aizturi starp tām).
+   Kad pēdējā izdzēsta, parādās obligātā aptauja.
+   ICON_STEP_MS = aizture starp katras ikonas dzēšanu (ms). */
+const ICON_STEP_MS = 220;
+let errorClosed=false;
+function closeError(){
+  if(errorClosed) return; errorClosed=true;   // neļaujam palaist divreiz
+  hide('error-dialog');                        // aizveram logu uzreiz
+
+  const icons=[...document.querySelectorAll('#desktop-icons .desk-icon')];
+  if(icons.length===0){
+    setTimeout(()=>{ show('warning'); }, 250);
+    return;
+  }
+  // izdzēšam ikonas vienu pēc otras
+  icons.forEach((icon,i)=>{
+    setTimeout(()=>{
+      icon.classList.add('deleting');
+      playPopSound();                          // dzēšanas skaņa katrai
+      setTimeout(()=>icon.remove(), 400);
+      // pēc pēdējās ikonas -> parādām aptauju
+      if(i===icons.length-1){
+        setTimeout(()=>{ show('warning'); }, 600);
+      }
+    }, i*ICON_STEP_MS);
+  });
+}
+
+/* ---- IEKŠĒJAIS PAZIŅOJUMA LOGS (aizstāj alert) ----
+   showPopup(teksts, [funkcijaPēcAizvēršanas]) — parāda paziņojumu lapā.
+   Tas ir uzticamāks nekā alert(), kas dažos pārlūkos var tikt bloķēts. */
+let popupCb=null;
+function showPopup(msg, cb){
+  $('popup-msg').textContent = msg;
+  popupCb = cb || null;
+  $('popup-overlay').classList.add('show');
+  playPopSound();   // 🔊 blēkšķis, kad parādās paziņojums
+}
+function closePopup(){
+  $('popup-overlay').classList.remove('show');
+  const cb=popupCb; popupCb=null;
+  if(cb) cb();
+}
+
+/* ---- AIZVĒRŠANAS (X) POGAS JOCIŅŠ ----
+   Pirmie 3 klikšķi uz "X" rāda arvien nekaunīgākus paziņojumus (X_LINES),
+   pēc 3. klikšķa VISAS aizvēršanas pogas pazūd pavisam. */
+let xRemoved=false, xClicks=0;
+const X_LINES=[
+  "Trying to bypass the system? No luck — this survey is MANDATORY.",
+  "Stop poking “✕”. The message will not close. One more click…",
+  "That is it, I am done. I am taking your “✕” button away for good! 😈"
+];
+function pokeX(){
+  if(xRemoved) return;
+  const msg = X_LINES[Math.min(xClicks,2)];
+  xClicks++;
+  const willRemove = (xClicks>=3);
+  showPopup(msg, ()=>{
+    if(willRemove){
+      xRemoved=true;
+      document.querySelectorAll('.close-x').forEach(b=>{ b.style.display='none'; });
+    }
+  });
+}
+function pokeXQuiz(){ pokeX(); } // aptaujas logā tas pats
+
+function startQuiz(){ hide('warning'); show('quiz'); nextQ(1); }
+function wobbleQuiz(){ const w=$('quiz'); w.style.transition='transform .4s'; w.style.transform='translate(-50%,-46%) scale(1)'; setTimeout(()=>w.style.transform='translate(-50%,-50%) scale(1)',260); }
+
+/* ---- JAUTĀJUMU PĀRSLĒGŠANA ----
+   Rāda jautājumu numuru n, atjauno progresa joslu un virsrakstu.
+   Kad jautājumi beigušies (n > TOTAL_Q), pāriet uz finish(). */
+function nextQ(n){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  if(n<=TOTAL_Q){
+    $('q'+n).classList.add('active');
+    $('quiz-title').textContent = `Survey · Question ${n} of ${TOTAL_Q}`;
+    $('progress-bar').style.width = ((n-1)/TOTAL_Q*100)+'%';
+    $('quiz').querySelector('.win-content').scrollTop=0;
+  } else {
+    finish();
+  }
+}
+
+/* ---- BĒGOŠĀ POGA (vispārīga) ----
+   Poga aizbēg nejaušā virzienā uz VISĀM pusēm katru reizi, kad tai
+   tuvojas kursors vai to nospiež. Der jebkurai pogai konteinerā ar
+   klasi "runaway-wrap". Izmanto absolūtu novietojumu. */
+function dodgeEl(b){
+  if(!b) return;
+  const wrap=b.closest('.runaway-wrap')||b.parentElement;
+  if(!b.dataset.free){
+    b.dataset.free="1";
+    b.style.position='absolute';
+  }
+  const wRect=wrap.getBoundingClientRect();
+  const bRect=b.getBoundingClientRect();
+  const maxX=Math.max(0, wRect.width  - bRect.width);
+  const maxY=Math.max(0, wRect.height - bRect.height);
+  const x=Math.random()*maxX;
+  const y=Math.random()*maxY;
+  b.style.left=x+'px';
+  b.style.top =y+'px';
+}
+// saglabājam veco nosaukumu 2. jautājumam (izsauc #runaway)
+function dodge(){ dodgeEl($('runaway')); }
+
+/* Liek pogai aizbēgt, tiklīdz kursors pienāk tuvu (ne tikai virsū).
+   Strādā jebkurai bēgošai pogai konteinerā (atrod .xp-btn ar data-flee). */
+function maybeDodge(ev){
+  const wrap=ev.currentTarget;
+  const b=wrap.querySelector('[data-flee], #runaway'); if(!b) return;
+  const r=b.getBoundingClientRect();
+  const cx=r.left+r.width/2, cy=r.top+r.height/2;
+  const dist=Math.hypot(ev.clientX-cx, ev.clientY-cy);
+  if(dist<80) dodgeEl(b);   // ja tuvāk par 80px — bēg
+}
+
+/* ---- IZBĒGOŠĀ TEKSTA POGA (1. jautājuma nepareizā atbilde) ----
+   1. klikšķis: teksts aizskrien prom PA KREISI -> poga paliek tukša.
+   2. klikšķis uz tukšās pogas: pati poga aizskrien PA KREISI no ekrāna.
+   Lietošana HTML pusē:
+     <button class="xp-btn fx-flee" onclick="escapeText(this, event)">TEKSTS</button> */
+function escapeText(btn, ev){
+  if(ev) ev.preventDefault();
+  if(!btn.dataset.fled){
+    // 1. solis — teksts aizskrien pa kreisi, poga paliek tukša
+    btn.dataset.fled = "1";
+    const txt = btn.textContent;
+    btn.innerHTML = '<span class="flee-txt">'+txt+'</span>';
+    const span = btn.querySelector('.flee-txt');
+    requestAnimationFrame(()=>{
+      span.style.transform = 'translateX(-400px)';   // pa kreisi
+      span.style.opacity = '0';
+    });
+    setTimeout(()=>{ btn.innerHTML='&nbsp;'; }, 480); // paliek tukša poga
+  } else {
+    // 2. solis — pati poga aizskrien pa kreisi no ekrāna
+    btn.style.transition = 'transform .5s ease, opacity .5s ease';
+    btn.style.transform = 'translateX(-1000px)';
+    btn.style.opacity = '0';
+    setTimeout(()=>{ btn.style.display='none'; }, 500);
+  }
+}
+
+/* ---- "BOSS" POGA (10. jautājums) ----
+   Jānospiež 3 reizes; katrs klikšķis rāda jaunu tekstu, pēc 3. iet tālāk. */
+let boss=0;
+function bossClick(){
+  boss++;
+  $('boss-btn').textContent=`START ENGINE (${Math.min(boss,3)}/3)`;
+  const t=$('boss-text');
+  if(boss===1){ t.textContent='Rrr… rrr… the engine sputters but will not start.'; playCrank(); }
+  else if(boss===2){ t.textContent='Almost! One more turn — hit the gas!'; playCrank(); }
+  else if(boss>=3){ t.textContent='Engine started! 🏁 Vroom!'; playEngineStart(); setTimeout(()=>nextQ(11),700); }
+}
+
+/* ---- VECUMA VERIFIKĀCIJA (11. jautājums) ----
+   populateAges = uztaisa vecumu sarakstu no min līdz max.
+   verifyAge = pārbauda izvēli. Ja pareizs (REAL_AGE) -> finish().
+   Ja nepareizs, saīsina sarakstu ar jociņu; pēc 3 kļūdām atstāj tikai pareizo. */
+let wrongAge=0;
+let noPickCount=0;   // cik reizes nospiests "Confirm age" BEZ vecuma izvēles
+function populateAges(min,max){
+  const sel=$('age-select'); sel.innerHTML='';
+  for(let i=min;i<=max;i++){
+    const o=document.createElement('option');
+    o.value=i; o.textContent=i+' years';
+    sel.appendChild(o);
+  }
+}
+
+/* Palīgs: iezīmē kaut kādu NE-pareizo vecumu no pašreizējā saraksta,
+   lai pēc nepareiza mēģinājuma izvēlne nekad nepaliktu tukša.
+   Ja sarakstā palicis tikai pareizais vecums, iezīmē to. */
+function selectSomeWrongAge(){
+  const sel=$('age-select'); const opts=sel.options;
+  if(!opts.length) return;
+  let idx=0;
+  for(let i=0;i<opts.length;i++){ if(parseInt(opts[i].value,10)!==REAL_AGE){ idx=i; break; } }
+  sel.selectedIndex=idx;
+  if(opts[idx]) opts[idx].scrollIntoView({block:'nearest'});
+}
+
+/* ---- VECUMA VERIFIKĀCIJA (11. jautājums) ----
+   Divas atsevišķas daļas:
+   A) NEKAS nav iezīmēts + Confirm age:
+        1. reize -> paziņojums A
+        2. reize -> paziņojums B
+        3. reize -> paziņojums C + iezīmējam vecumu lietotāja vietā
+      (Tekstus maini NO_PICK_LINES sarakstā zemāk.)
+   B) Ir iezīmēts NEPAREIZS vecums + Confirm age:
+        saraksts saruk, UN uzreiz iezīmējam kaut kādu citu (ne-pareizo)
+        vecumu, lai izvēlne nekad nepaliktu tukša.
+      Pēc 3 nepareiziem mēģinājumiem sistēma "palīdz" un atstāj tikai 32. */
+const NO_PICK_LINES = [
+  'You have to actually PICK an age. Tap one. Use your finger.',
+  'Still nothing selected? The little list. Right there. Click it.',
+  'Alright, I have lost my patience — I will pick one FOR you.'
+];
+function verifyAge(){
+  const sel=$('age-select');
+  const msg=$('age-msg');
+  const val=parseInt(sel.value,10);
+
+  // ---- A) NAV iezīmēts vecums ----
+  if(!val){
+    msg.style.color='#c0271a';
+    if(noPickCount===0){
+      msg.textContent=NO_PICK_LINES[0];
+      noPickCount++;
+      return;                       // 1. reize — tikai paziņojums
+    } else if(noPickCount===1){
+      msg.textContent=NO_PICK_LINES[1];
+      noPickCount++;
+      return;                       // 2. reize — tikai paziņojums
+    } else {
+      msg.textContent=NO_PICK_LINES[2];   // 3. reize — paziņojums + iezīmējam
+      noPickCount=0;                // atiestatām
+      selectSomeWrongAge();
+      return;                       // nākamais klikšķis pārbaudīs iezīmēto
+    }
+  }
+
+  // vecums IR iezīmēts -> atiestatām "no izvēles" skaitītāju
+  noPickCount=0;
+
+  // ---- Pareizais vecums ----
+  if(val===REAL_AGE){
+    msg.style.color='#2f7d1a';
+    msg.textContent='Verification successful — age 32 confirmed! 🎉';
+    setTimeout(finish,600);
+    return;
+  }
+
+  // ---- B) NEPAREIZS vecums ----
+  wrongAge++;
+  msg.style.color='#c0271a';
+
+  if(wrongAge>=3){
+    // sistēma "palīdz atcerēties" — atstāj tikai 32
+    msg.style.color='#2f7d1a';
+    msg.textContent='I see your memory is failing a bit… Let me help! Leaving only the correct option.';
+    populateAges(REAL_AGE,REAL_AGE);
+    sel.value=REAL_AGE;
+    return;
+  } else if(val<REAL_AGE){
+    // izvēlējies PAR JAUNU — divi dažādi teksti (1. un 2. mēģinājums)
+    if(wrongAge===1){
+      msg.textContent=`Nice try, but the mirror disagrees. Removing everything up to ${val}.`;
+    } else {
+      msg.textContent=`Still lying younger? Bold. Those ages are gone too — up to ${val}.`;
+    }
+    populateAges(val+1,99);
+  } else {
+    // izvēlējies PAR VECU — divi dažādi teksti (1. un 2. mēģinājums)
+    if(wrongAge===1){
+      msg.textContent=`Whoa there, grandpa. Even you are not THAT old. Cutting the list.`;
+    } else {
+      msg.textContent=`Ambitious! But no, you have not hit that number yet. Shrinking again.`;
+    }
+    populateAges(1,val-1);
+  }
+  // pēc nepareiza mēģinājuma uzreiz iezīmējam kaut ko (nekad tukšs)
+  selectSomeWrongAge();
+}
+
+/* ---- SERTIFIKĀTA "X" JOCIŅŠ ----
+   Nospiežot sertifikāta ✕: parādās paziņojums, tad ✕ poga pazūd.
+   Sertifikāts paliek atvērts (netiek aizvērts). */
+function certCloseGag(){
+  showPopup("Nice try 😏 You will not close this certificate that easily!", ()=>{
+    const x = $('cert-x');
+    if(x) x.style.display = 'none';    // noņemam ✕ pogu pavisam
+  });
+}
+
+/* ---- FINĀLS: SASNIEGUMS -> SERTIFIKĀTS ----
+   Parāda "achievement" paziņojumu ~3 sekundes, tad atver sertifikāta logu. */
+function finish(){
+  hide('quiz');
+  const ach=$('achievement');
+  ach.classList.add('show');
+  playPopSound();            // 🔊 "achievement unlocked" blēkšķis (Xbox stilā)
+  setTimeout(()=>{
+    ach.classList.remove('show');
+    show('cert-window');
+    launchConfetti();        // 🎉 konfeti, kad parādās sertifikāts
+  }, 3200);
+}
+
+/* ---- KONFETI (pēc sertifikāta) ----
+   Uzzīmē krāsainus konfeti gabaliņus, kas nokrīt no augšas.
+   Skaitu un ilgumu var mainīt zemāk (COUNT, DURATION_MS). */
+function launchConfetti(){
+  playCheerSound();          // 🔊 svinīga skaņa kopā ar konfeti
+  const COUNT = 90;          // cik konfeti gabaliņu
+  const DURATION_MS = 4000;  // cik ilgi (ms) tie krīt
+  const box = document.createElement('div');
+  box.className = 'confetti-box';
+  const colors = ['#e0392b','#f4c430','#2f6fe0','#57991f','#ff8a00','#a24dd6','#19b5c9'];
+  for(let i=0;i<COUNT;i++){
+    const c = document.createElement('i');
+    c.style.left = Math.random()*100 + 'vw';
+    c.style.background = colors[Math.floor(Math.random()*colors.length)];
+    c.style.animationDelay = (Math.random()*0.8) + 's';
+    c.style.animationDuration = (2.2 + Math.random()*1.8) + 's';
+    c.style.transform = `rotate(${Math.random()*360}deg)`;
+    if(Math.random()<0.5) c.style.borderRadius = '50%'; // daži apaļi
+    box.appendChild(c);
+  }
+  document.body.appendChild(box);
+  setTimeout(()=>box.remove(), DURATION_MS + 1200);
+}
+
+/* ---- SERTIFIKĀTA SAGLABĀŠANA KĀ ATTĒLS (PNG) ----
+   Izmanto html2canvas, lai visu sertifikātu (#cert-export) pārvērstu bildē
+   un lejupielādētu. Ja neizdodas, iesaka izmantot "Drukāt sertifikātu". */
+function saveCert(){
+  const el=$('cert-export');
+  html2canvas(el,{scale:2,backgroundColor:'#fffdf6',useCORS:true}).then(c=>{
+    const link=document.createElement('a');
+    link.download='Gunars-Level-32-Sertifikats.png';
+    link.href=c.toDataURL('image/png');
+    link.click();
+  }).catch(()=>alert('Could not save the image. Try “Print certificate”.'));
+}
+
+/* ---- EFEKTI ARĪ UZ TELEFONA (pieskāriens) ----
+   Uz datora efekti strādā ar peles "hover". Telefonā hover nav, tāpēc šeit
+   katrai fx-pogai pie pieskāriena/klikšķa uz brīdi pievienojam klasi
+   "fx-play" — tā nospēlē to pašu animāciju, un tad turpinām uz nākamo
+   jautājumu. fx-flee pogas izlaižam, jo tām ir sava īpašā loģika. */
+document.addEventListener('DOMContentLoaded', ()=>{
+  applyQEffects();   // vispirms piemēro pogu efektus no Q_EFFECTS konfigurācijas
+  document.querySelectorAll('.xp-btn[class*="fx-"]').forEach(btn=>{
+    if(btn.classList.contains('fx-flee')) return; // tai ir sava loģika
+    if(btn.classList.contains('fx-keep')) return; // īpašas pogas (piem. boss),
+                                                   // kur onclick jāizsauc katru reizi
+    // atrodam pogas oriģinālo darbību (piem. nextQ(2)) un aizkavējam to
+    const orig = btn.getAttribute('onclick');
+    if(!orig) return;
+    btn.removeAttribute('onclick');
+    btn.addEventListener('click', function(ev){
+      if(btn.dataset.playing) return;      // neļaujam dubultklikšķi
+      btn.dataset.playing = "1";
+      btn.classList.add('fx-play');        // nospēlē efektu (arī telefonā)
+      setTimeout(()=>{
+        btn.classList.remove('fx-play');
+        try{ new Function('event', orig).call(btn, ev); }catch(e){}
+      }, 480);                             // efekta ilgums pirms pārejas
+    });
+  });
+
+  runTestMode();   // ja TEST_MODE = true, pārlec uz norādīto sadaļu
+});
+
+/* ---- TESTA REŽĪMS ----
+   Ja TEST_MODE = true, pārlec uzreiz uz TEST_SCREEN norādīto sadaļu.
+   Skatīt iestatījumus augšā (TEST_MODE / TEST_SCREEN). */
+function runTestMode(){
+  if(!TEST_MODE) return;
+  started=true;                      // neļaujam parastajai login plūsmai palaisties
+  $('login-screen').style.display='none';
+
+  let scr=TEST_SCREEN;
+  // konkrēts jautājums, piem. 'quiz5'
+  let qNum=null;
+  const m=/^quiz(\d+)$/.exec(scr);
+  if(m){ qNum=parseInt(m[1],10); scr='quiz'; }
+
+  if(scr==='login'){
+    $('login-screen').style.display='';   // atpakaļ uz login
+    return;
+  }
+  if(scr==='boot'){
+    $('boot-screen').classList.add('show');
+    return;
+  }
+  // pārējām sadaļām vajag redzamu darbvirsmu
+  $('desktop').style.display='block';
+  populateAges(1,99);
+
+  if(scr==='error'){ show('error-dialog'); }
+  else if(scr==='warning'){ show('warning'); }
+  else if(scr==='quiz'){ show('quiz'); nextQ(qNum||1); }
+  else if(scr==='cert'){ show('cert-window'); launchConfetti(); }
+  else { console.warn('TEST_SCREEN nezināma vērtība:', TEST_SCREEN); }
+}
+</script>
+</body>
+</html>
