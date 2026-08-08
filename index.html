@@ -406,6 +406,13 @@ html,body{
   .win-content{padding:16px 14px 20px;}
   .q-title{font-size:16px;}
   .cert-name{font-size:28px;}
+  /* telefonā: zīmogs un lente mazāki, un virsraksts sākas zem tiem */
+  .cert{padding:64px 16px 18px;}
+  .cert-seal-tl{width:52px;height:52px;top:10px;left:10px;font-size:8px;}
+  .cert-seal-tl b{font-size:12px;}
+  .cert-ribbon{font-size:9px;padding:4px 9px;top:10px;}
+  .cert-kicker{font-size:9px;letter-spacing:1.5px;}
+  .cert-header{font-size:20px;}
 }
 
 /* boot kursors */
@@ -673,7 +680,7 @@ html,body{
         <div class="q-title fx-wobble">If you could go back into the past, what would you do?</div>
         <div class="q-img-wrap"><img class="q-img" data-ph="Image: q6.jpg" src="./q6.jpg" alt=""></div>
         <div class="options">
-          <button class="xp-btn" onclick="revealThenNext(this, 7)"><span class="reverse-text">Prevent the "Laura Dārziņa" injury simulation.</span></button>
+          <button class="xp-btn" onclick="revealThenNext(this, 7)"><span class="reverse-text">Prevent the whole "Laura Dārziņa" injury simulation.</span></button>
           <button class="xp-btn" onclick="revealThenNext(this, 7)"><span class="reverse-text">Be Neo (from The Matrix) and actually make the rooftop run this time — while escaping from Sharky.</span></button>
           <button class="xp-btn" onclick="revealThenNext(this, 7)"><span class="reverse-text">Build another Sharky house with the cousins.</span></button>
         </div>
@@ -802,8 +809,8 @@ html,body{
             All jokes aside — happy 32nd birthday! I hope you have an amazing day and an even better year ahead.
           </p>
           <div class="sig">
-            <div class="name">Ķekaviešiem</div>
-            <div class="role">From </div>
+            <div class="name">The Ķekava crew</div>
+            <div class="role">With love,</div>
           </div>
         </div>
 
@@ -815,12 +822,12 @@ html,body{
               <div class="pet">
                 <!-- Pirmā kaķa bilde: ./cat1.jpg -->
                 <img data-ph="cat1.jpg" src="./cat1.jpg" alt="">
-                <span class="paw">🐱 Lote </span>
+                <span class="paw">🐱 Cat No. 1</span>
               </div>
               <div class="pet">
                 <!-- Otrā kaķa bilde: ./cat2.jpg -->
                 <img data-ph="cat2.jpg" src="./cat2.jpg" alt="">
-                <span class="paw">🐱 Hakijs </span>
+                <span class="paw">🐱 Cat No. 2</span>
               </div>
             </div>
             <span class="arrow-line" aria-hidden="true">➜</span>
